@@ -1,7 +1,5 @@
 import json
-from utils import check_option
-from models.prodavnica import Store
-from models.korpa import Cart
+from utils import check_option, add_product, change_store, view_store
 
 
 def main():
@@ -16,21 +14,21 @@ def main():
         if not check_option(opcija):
             continue
         if opcija == "1":
-            Store.view_store()
+            view_store()
         if opcija == "2":
-            naziv, kolicina = Cart.check_korpa()
-            Cart.add_product(naziv, kolicina)
-            Store.change_store(naziv, kolicina)
-            
+            naziv = input("Unesi ime proizvoda :")
+            kolicina = input("Unesi kolicinu :")
+            if add_product(naziv, kolicina):
+                change_store(naziv, kolicina)
         if opcija == "3":
+            # TODO: First return products to the product list, then empty the cart
             with open(r"data/korpa.json", "r") as f:
                 korpa_k = json.load(f)
                 print(korpa_k)
-
         if opcija == "4":
             new_corpa = []
             with open(r"data/korpa.json", "w") as f:
-                korpa_h = json.dump(new_corpa, f)
+                korpa_h = json.dump(new_corpa, f, indent=6)
                 print(korpa_h)
         if opcija == "5":
             print("izlaz")

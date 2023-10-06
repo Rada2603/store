@@ -1,17 +1,1 @@
-[
-      {
-            "name": "Jabuka",
-            "price": 100,
-            "quantity": 20
-      },
-      {
-            "name": "Kruska",
-            "price": 150,
-            "quantity": 10
-      },
-      {
-            "name": "Jabuka",
-            "price": 100,
-            "quantity": 10
-      }
-]
+[]
