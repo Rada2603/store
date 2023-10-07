@@ -1,5 +1,5 @@
 import json
-from utils import check_option, add_product, change_store, view_store
+from utils import check_option, add_product, change_store, view_store, change_korpa
 
 
 def main():
@@ -26,10 +26,10 @@ def main():
                 korpa_k = json.load(f)
                 print(korpa_k)
         if opcija == "4":
-            new_corpa = []
-            with open(r"data/korpa.json", "w") as f:
-                korpa_h = json.dump(new_corpa, f, indent=6)
-                print(korpa_h)
+            naziv_k = input("Unesi naziv proizvoda koji zelis da obrises :")
+            kolicina_k = input("Unesi kolicinu")
+            change_korpa(naziv_k, kolicina_k)
+
         if opcija == "5":
             print("izlaz")
             break

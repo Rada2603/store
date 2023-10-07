@@ -2,16 +2,16 @@
       {
             "name": "Jabuka",
             "price": 100,
-            "quantity": 330
+            "quantity": 1135
       },
       {
             "name": "Kruska",
             "price": 150,
-            "quantity": 470
+            "quantity": 750
       },
       {
             "name": "Malina",
             "price": 130,
-            "quantity": 200
+            "quantity": 350
       }
 ]
