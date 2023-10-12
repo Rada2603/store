@@ -45,7 +45,7 @@ def add_cart(naziv, kolicina):
             with open(r"data\korpa2.json", "w") as f:
                 json.dump(korpa, f, indent=4)
             with open(r"data\prodavnica2.json", "w") as f:
-                store[naziv]["quantity"]-= int(kolicina)
+                store[naziv]["quantity"] -= int(kolicina)
                 json.dump(store, f, indent=4)
         else:
             print("\nPogresna kolicina\n")
@@ -66,7 +66,7 @@ def change_cart(naziv, kolicina):
         store = json.load(f)
     if naziv in korpa:
         if int(kolicina) < korpa[naziv]["quantity"]:
-            korpa[naziv]["quantity"]-= int(kolicina)
+            korpa[naziv]["quantity"] -= int(kolicina)
         elif int(kolicina) ==  korpa[naziv]["quantity"]:
             del korpa[naziv]  
             with open(r"data\korpa2.json", "w") as f:
