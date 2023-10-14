@@ -70,22 +70,42 @@ def view_cart():
         print(korpa)
 
 
-def change_cart(naziv, kolicina):
-    with open(r"data\korpa2.json", "r") as f:
+def change_cart(
+    naziv,
+    kolicina,
+    path_store: str = r"data\prodavnica2.json",
+    path_korpa: str = r"data\korpa2.json",
+) -> bool:
+    with open(path_korpa, "r") as f:
         korpa = json.load(f)
-    with open(r"data\prodavnica2.json", "r") as f:
+    with open(path_store, "r") as f:
         store = json.load(f)
     if naziv in korpa:
+        print(".......")
         if int(kolicina) < korpa[naziv]["quantity"]:
+            print("//////")
             korpa[naziv]["quantity"] -= int(kolicina)
-        elif int(kolicina) == korpa[naziv]["quantity"]:
-            del korpa[naziv]
-            with open(r"data\korpa2.json", "w") as f:
+            with open(path_korpa, "w") as f:
                 json.dump(korpa, f, indent=4)
-            with open(r"data\prodavnica2.json", "w") as f:
+                print("++++++")
+            with open(path_store, "w") as f:
                 store[naziv]["quantity"] += int(kolicina)
                 json.dump(store, f, indent=4)
+                print("--------")
+                return True
+        elif int(kolicina) == korpa[naziv]["quantity"]:
+            del korpa[naziv]
+            with open(path_korpa, "w") as f:
+                json.dump(korpa, f, indent=4)
+                print("*******")
+            with open(path_store, "w") as f:
+                store[naziv]["quantity"] += int(kolicina)
+                json.dump(store, f, indent=4)
+                print("111111")
+                return True
         else:
             print("\nPogresna kolicina")
+            return False
     else:
         print("\nPogresan proizvod\n")
+        return False
