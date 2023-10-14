@@ -48,6 +48,12 @@ class ChangeCart(unittest.TestCase):
             self.assertIn("Jabuka", korpa)
             self.assertEqual(korpa["Jabuka"]["price"], 100)
             self.assertEqual(korpa["Jabuka"]["quantity"], 5)
+        
+        with open( r"tests\test_data\prodavnica2.json","r") as f:
+            prodavnica = json.load(f)
+            self.assertIn("Jabuka", prodavnica)
+            self.assertEqual(prodavnica["Jabuka"]["price"], 100)
+            self.assertEqual(prodavnica["Jabuka"]["quantity"], 295)
 
     def test_change_product_of_cart(self):
         self.assertEqual(
