@@ -1,14 +1,14 @@
 {
-    "Jabuka": {
-        "price": 100,
-        "quantity": 185
-    },
     "Kruska": {
         "price": 200,
-        "quantity": 200
+        "quantity": 180
     },
     "Malina": {
         "price": 300,
-        "quantity": 300
+        "quantity": 280
+    },
+    "Jabuka": {
+        "price": 100,
+        "quantity": 290
     }
 }

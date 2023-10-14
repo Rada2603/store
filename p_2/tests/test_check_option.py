@@ -1,5 +1,5 @@
 import unittest
-from p_2.utils_2 import check_option
+from utils_2 import check_option
 
 
 class TestCheckOption(unittest.TestCase):
@@ -13,7 +13,7 @@ class TestCheckOption(unittest.TestCase):
 
     def test_valid_option3(self):
         result = check_option("3")
-        self.assertTrue(result, "Expected a valid option")  
+        self.assertTrue(result, "Expected a valid option")
 
     def test_valid_option4(self):
         result = check_option("4")
@@ -26,7 +26,7 @@ class TestCheckOption(unittest.TestCase):
     def test_valid_option_low(self):
         result = check_option("0")
         self.assertFalse(result, "Expected a valid option")
-    
+
     def test_invalid_option_high(self):
         result = check_option("6")
         self.assertFalse(result, "Expected an invalid option")
@@ -35,7 +35,6 @@ class TestCheckOption(unittest.TestCase):
         result = check_option("abc")
         self.assertFalse(result, "Expected an invalid option")
 
-    
 
 if __name__ == "__main__":
     unittest.main()

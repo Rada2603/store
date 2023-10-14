@@ -29,11 +29,17 @@ def view_store():
         print(store)
 
 
-def add_cart(naziv, kolicina):
-    with open(r"data\prodavnica2.json", "r") as f:
+def add_cart(
+    naziv,
+    kolicina,
+    path_store: str = r"data\prodavnica2.json",
+    path_korpa: str = r"data\korpa2.json",
+) -> bool:
+    with open(path_store, "r") as f:
         store = json.load(f)
-    with open(r"data\korpa2.json", "r") as f:
+    with open(path_korpa, "r") as f:
         korpa = json.load(f)
+
     if naziv in store:
         if naziv in korpa:
             nova_kolicina = korpa[naziv]["quantity"] + int(kolicina)
@@ -42,15 +48,20 @@ def add_cart(naziv, kolicina):
         if nova_kolicina <= store[naziv]["quantity"]:
             price = store[naziv]["price"]
             korpa[naziv] = {"price": price, "quantity": nova_kolicina}
-            with open(r"data\korpa2.json", "w") as f:
+
+            with open(path_korpa, "w") as f:
                 json.dump(korpa, f, indent=4)
-            with open(r"data\prodavnica2.json", "w") as f:
+            with open(path_store, "w") as f:
                 store[naziv]["quantity"] -= int(kolicina)
                 json.dump(store, f, indent=4)
+
+            return True
         else:
             print("\nPogresna kolicina\n")
+            return False
     else:
         print("\nPogresan proizvod\n")
+        return False
 
 
 def view_cart():
@@ -67,15 +78,14 @@ def change_cart(naziv, kolicina):
     if naziv in korpa:
         if int(kolicina) < korpa[naziv]["quantity"]:
             korpa[naziv]["quantity"] -= int(kolicina)
-        elif int(kolicina) ==  korpa[naziv]["quantity"]:
-            del korpa[naziv]  
+        elif int(kolicina) == korpa[naziv]["quantity"]:
+            del korpa[naziv]
             with open(r"data\korpa2.json", "w") as f:
                 json.dump(korpa, f, indent=4)
             with open(r"data\prodavnica2.json", "w") as f:
                 store[naziv]["quantity"] += int(kolicina)
-                json.dump(store, f, indent=4)  
+                json.dump(store, f, indent=4)
         else:
             print("\nPogresna kolicina")
     else:
         print("\nPogresan proizvod\n")
-
