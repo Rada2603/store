@@ -1,7 +1,11 @@
-from utils_3 import check_option, view_store, add_to_cart, view_cart,change_cart
+from utils_3 import check_option, change_cart
+from models.store import Store
+from models.cart import Cart
 
 
 def main():
+    prodavnica = Store(r"data\prodavnica.csv", r"data\korpa.csv")
+    korpa = Cart(r"data\korpa.csv", r"data\prodavnica.csv")
     print("\nDobro dosli\n")
     while True:
         print("1.Prikazi proizvode")
@@ -13,13 +17,13 @@ def main():
         if not check_option(opcija):
             continue
         if opcija == "1":
-            view_store()
+            prodavnica.view_store()
         if opcija == "2":
             naziv = input("Unesi naziv proizvoda :")
             kolicina = input("Unesi kolicinu :")
-            add_to_cart(naziv, kolicina)
+            korpa.add_to_cart(naziv, kolicina)
         if opcija == "3":
-            view_cart()
+            korpa.view_cart()
         if opcija == "4":
             naziv = input("Unesi naziv proizvoda :")
             kolicina = input("Unesi kolicinu :")
@@ -27,25 +31,6 @@ def main():
         if opcija == "5":
             print("IZLAZ")
             break
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 if __name__ == "__main__":
