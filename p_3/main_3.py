@@ -1,4 +1,4 @@
-from utils_3 import check_option, change_cart
+from utils_3 import check_option
 from models.store import Store
 from models.cart import Cart
 
