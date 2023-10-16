@@ -18,5 +18,3 @@ def check_option(opcija: str) -> bool:
 
     except Exception:
         print("\npogresan izbor\n")
-
-
