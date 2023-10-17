@@ -96,3 +96,5 @@ class ChangeCart(unittest.TestCase):
             ),
             True,
         )
+if __name__ == "__main__":
+    unittest.main()

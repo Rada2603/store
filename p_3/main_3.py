@@ -5,8 +5,8 @@ from models.store import Store
 
 
 def main():
-    store = Store(r"data\prodavnica.csv", r"data/korpa.csv" )
-    cart = Cart(r"data\prodavnica.csv" , r"data/korpa.csv")
+    store = Store(r"data\prodavnica.csv", r"data/korpa.csv")
+    cart = Cart(r"data\prodavnica.csv", r"data/korpa.csv")
     print("\nDobro dosli\n")
     while True:
         print("1.Prikazi proizvode")
