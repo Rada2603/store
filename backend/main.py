@@ -6,6 +6,9 @@ import uvicorn
 from pydantic import BaseModel
 
 app = FastAPI()
+class Product(BaseModel):
+    naziv: str
+    kolicina: int
 
 
 @app.get("/store")
@@ -23,34 +26,34 @@ def view_cart():
 
 
 @app.post("/add_product")
-def add_cart(naziv: str, kolicina: int):
+def add_cart(product: Product):
     korpa = pd.read_csv(r"data\korpa.csv")
     prodavnica = pd.read_csv(r"data\prodavnica.csv")
-    if naziv in prodavnica["Naziv"].values:
+    if product.naziv in prodavnica["Naziv"].values:
         if (
-            int(kolicina)
-            <= prodavnica.loc[prodavnica["Naziv"] == naziv, "Kolicina"].values[
+            int(product.kolicina)
+            <= prodavnica.loc[prodavnica["Naziv"] == product.naziv, "Kolicina"].values[
                 0
             ]
         ):
-            prodavnica.loc[prodavnica["Naziv"] == naziv, "Kolicina"] -= int(
-                kolicina
+            prodavnica.loc[prodavnica["Naziv"] == product.naziv, "Kolicina"] -= int(
+                product.kolicina
             )
             prodavnica.to_csv(r"data\prodavnica.csv", index=False)
         else:
             raise HTTPException(status_code=400, detail="Pogrešan kolicina")
-        if naziv in korpa["Naziv"].values:
-            korpa.loc[korpa["Naziv"] == naziv, "Kolicina"] += int(kolicina)
+        if product.naziv in korpa["Naziv"].values:
+            korpa.loc[korpa["Naziv"] == product.naziv, "Kolicina"] += int(product.kolicina)
             korpa.to_csv(r"data\korpa.csv", index=False)
         else:
             prodavnica = pd.read_csv(r"data\prodavnica.csv")
             store_cena = prodavnica.loc[
-                prodavnica["Naziv"] == naziv, "Cena"
+                prodavnica["Naziv"] == product.naziv, "Cena"
             ].values[0]
             novi_proizvod = {
-                "Naziv": naziv,
+                "Naziv": product.naziv,
                 "Cena": store_cena,
-                "Kolicina":kolicina,
+                "Kolicina":product.kolicina,
             }
             korpa = korpa._append(novi_proizvod, ignore_index=True)
             korpa.to_csv(r"data\korpa.csv", index=False)
@@ -60,19 +63,20 @@ def add_cart(naziv: str, kolicina: int):
 
 
 @app.post("/change_cart")
-def delete_product_cart(naziv: str, kolicina: int):
+def delete_product_cart(product: Product):
     korpa = pd.read_csv(r"data\korpa.csv")
     prodavnica = pd.read_csv(r"data\prodavnica.csv")
-    if naziv in korpa["Naziv"].values:
-        cart_kolicina = korpa.loc[korpa["Naziv"] == naziv, "Kolicina"].values[0]
-        if int(kolicina) < cart_kolicina:
-            prodavnica.loc[prodavnica["Naziv"] == naziv, "Kolicina"] += int(kolicina)
-            korpa.loc[korpa["Naziv"] == naziv, "Kolicina"] -= int(kolicina)
+    if product.naziv in korpa["Naziv"].values:
+        print(product.naziv)
+        cart_kolicina = korpa.loc[korpa["Naziv"] == product.naziv, "Kolicina"].values[0]
+        if int(product.kolicina) < cart_kolicina:
+            prodavnica.loc[prodavnica["Naziv"] == product.naziv, "Kolicina"] += int(product.kolicina)
+            korpa.loc[korpa["Naziv"] == product.naziv, "Kolicina"] -= int(product.kolicina)
             prodavnica.to_csv(r"data\prodavnica.csv", index=False)
             korpa.to_csv(r"data\korpa.csv", index=False)
-        elif int(kolicina) == cart_kolicina:
-            prodavnica.loc[prodavnica["Naziv"] == naziv, "Kolicina"] += int(kolicina)
-            korpa = korpa[korpa["Naziv"] != naziv]
+        elif int(product.kolicina) == cart_kolicina:
+            prodavnica.loc[prodavnica["Naziv"] == product.naziv, "Kolicina"] += int(product.kolicina)
+            korpa = korpa[korpa["Naziv"] != product.naziv]
             prodavnica.to_csv(r"data\prodavnica.csv", index=False)
             korpa.to_csv(r"data\korpa.csv", index=False)
         else:
@@ -82,18 +86,6 @@ def delete_product_cart(naziv: str, kolicina: int):
     return korpa.to_dict(orient="records"), prodavnica.to_dict(orient="records")
 
 
-class TestData(BaseModel):
-    naziv: str
-    kolicina: int
-
-
-@app.post("/test")
-def test(data: TestData):
-
-    print(data.naziv)
-    print(data.kolicina)
-
-    return data.dict()
 
 
 if __name__ == "__main__":
