@@ -3,6 +3,7 @@ from fastapi import FastAPI, HTTPException
 import json
 from pydantic import BaseModel
 import uvicorn
+from pydantic import BaseModel
 
 app = FastAPI()
 
@@ -28,9 +29,13 @@ def add_cart(naziv: str, kolicina: int):
     if naziv in prodavnica["Naziv"].values:
         if (
             int(kolicina)
-            <= prodavnica.loc[prodavnica["Naziv"] == naziv, "Kolicina"].values[0]
+            <= prodavnica.loc[prodavnica["Naziv"] == naziv, "Kolicina"].values[
+                0
+            ]
         ):
-            prodavnica.loc[prodavnica["Naziv"] == naziv, "Kolicina"] -= int(kolicina)
+            prodavnica.loc[prodavnica["Naziv"] == naziv, "Kolicina"] -= int(
+                kolicina
+            )
             prodavnica.to_csv(r"data\prodavnica.csv", index=False)
         else:
             raise HTTPException(status_code=400, detail="Pogrešan kolicina")
@@ -39,11 +44,13 @@ def add_cart(naziv: str, kolicina: int):
             korpa.to_csv(r"data\korpa.csv", index=False)
         else:
             prodavnica = pd.read_csv(r"data\prodavnica.csv")
-            store_cena = prodavnica.loc[prodavnica["Naziv"] == naziv, "Cena"].values[0]
+            store_cena = prodavnica.loc[
+                prodavnica["Naziv"] == naziv, "Cena"
+            ].values[0]
             novi_proizvod = {
                 "Naziv": naziv,
                 "Cena": store_cena,
-                "Kolicina": kolicina,
+                "Kolicina":kolicina,
             }
             korpa = korpa._append(novi_proizvod, ignore_index=True)
             korpa.to_csv(r"data\korpa.csv", index=False)
