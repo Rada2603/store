@@ -1,6 +1,7 @@
 import pandas as pd
 from fastapi import FastAPI, HTTPException
 import json
+from pydantic import BaseModel
 import uvicorn
 
 app = FastAPI()
@@ -72,6 +73,20 @@ def delete_product_cart(naziv: str, kolicina: int):
     else:
         raise HTTPException(status_code=400, detail="Pogrešan proizvod")
     return korpa.to_dict(orient="records"), prodavnica.to_dict(orient="records")
+
+
+class TestData(BaseModel):
+    naziv: str
+    kolicina: int
+
+
+@app.post("/test")
+def test(data: TestData):
+
+    print(data.naziv)
+    print(data.kolicina)
+
+    return data.dict()
 
 
 if __name__ == "__main__":
