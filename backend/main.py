@@ -1,27 +1,41 @@
-
 from fastapi import FastAPI
-from models.store import view_store, change_store
-from models.cart import view_cart, add_cart, delete_product_cart
-from models.login import login_seller
+from models.store import (
+    view_store,
+    add_new_product_in_store,
+    change_quantity_product_in_store,
+)
+from models.cart import (
+    view_cart_stefan,
+    add_product_stefancart,
+    delete_product_cart,
+    view_cart_olivera,
+)
+from models.login import login_seller, login_customer
 import uvicorn
-from utils import Seller, Product
+from utils import User, Product
+
 
 app = FastAPI()
 
 
 @app.get("/store")
 def view_store_route():
-    return view_store()  
+    return view_store()
 
 
-@app.get("/cart")
-def view_cart_route():
-    return view_cart()
+@app.get("/stefan")
+def view_cart_stefan_route():
+    return view_cart_stefan()
 
 
-@app.post("/add_product")
-def add_cart_route(product: Product):
-    return add_cart(product)
+@app.get("/olivera")
+def view_cart_olivera_route():
+    return view_cart_olivera()
+
+
+@app.post("/add_product_stef")
+def add_product_steafncart_route(kupac: User, product: Product):
+    return add_product_stefancart(kupac,product)
 
 
 @app.post("/change_cart")
@@ -29,14 +43,24 @@ def delete_product_cart_route(product: Product):
     return delete_product_cart(product)
 
 
-@app.post("/login/")
-def login_seller_route(seller: Seller):
+@app.post("/logins/")
+def login_seller_route(seller: User):
     return login_seller(seller)
 
 
-@app.post("/change_store")
-def change_store_route(seller: Seller, product: Product):
-    return change_store(seller, product)
+@app.post("/add_product_in_store")
+def add_new_product_in_store_route(seller: User, product: Product):
+    return add_new_product_in_store(seller, product)
+
+
+@app.post("/change_quantity")
+def change_quantity_product_in_store_route(seller: User, product: Product):
+    return change_quantity_product_in_store(seller, product)
+
+
+@app.post("/loginc/")
+def login_customer_router(customer: User):
+    return login_customer(customer)
 
 
 if __name__ == "__main__":
