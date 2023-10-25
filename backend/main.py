@@ -4,7 +4,7 @@ from models.store import (
     add_new_product_in_store,
     change_quantity_product_in_store,
 )
-from models.cart import add_product
+from models.cart import add_product, delete_product
 
 
 from models.login import login_seller, login_customer
@@ -43,6 +43,10 @@ def change_quantity_product_in_store_route(seller: User, product: Product):
 @app.post("/add_cart")
 def add_product_route(kupac: User, product: Product):
     return add_product(kupac, product)
+
+@app.post("/delete_product")
+def delete_product_route(kupac: User, product: Product):
+    return delete_product(kupac, product)
 
 
 if __name__ == "__main__":
