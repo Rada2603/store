@@ -3,87 +3,50 @@ import json
 from fastapi import HTTPException
 from utils import Product, User
 
-stefanova_korpa = r"data\korpa_stefan.csv"
-oliverina_korpa = r"/data/oliverina_korpa.csv"
+#stefanova_korpa = r"data/Stefan_korpa.csv"
+#oliverina_korpa = r"data/Oliverina_korpa.csv"
 prodavnica = r"data\prodavnica.csv"
 
 
-def view_cart_stefan():
-    stefan_csv = pd.read_csv(stefanova_korpa)
-    stefan_json = stefan_csv.to_json(orient="records")
-    return json.loads(stefan_json)
-
-
-def view_cart_olivera():
-    olivera_csv = pd.read_csv(oliverina_korpa)
-    olivera_json = olivera_csv.to_json(olivera_csv)
-    return json.loads(olivera_json)
-
-
-def add_product_stefancart(kupac: User, product: Product):
-    stefan_csv = pd.read_csv(stefanova_korpa)
+def add_product(kupac: User, product: Product):
     with open(r"data\ulogovani_kupci.json") as f:
         kupac_log = json.load(f)
+        kupac_ulogovani = False
         for kupac1 in kupac_log:
             if (
                 kupac1["username"] == kupac.username
                 and kupac1["password"] == kupac.password
             ):
-                prodavnica_csv = pd.read_csv(prodavnica)
-                if product.naziv in prodavnica_csv["Naziv"].values:
-                    if (
-                        int(product.kolicina)
-                        <= prodavnica_csv.loc[
-                            prodavnica_csv["Naziv"] == product.naziv, "Kolicina"
-                        ].values[0]
-                    ):
-                        
-                        prodavnica_csv.loc[
-                            prodavnica_csv["Naziv"] == product.naziv, "Kolicina"
-                        ] -= int(product.kolicina)
-                        prodavnica_csv.to_csv(prodavnica, index=False)
-                    else:
-                        raise HTTPException(status_code=400, detail="Pogrešna kolicina")
-                    if product.naziv in stefan_csv["Naziv"].values:
-                        stefan_csv.loc[
-                            stefan_csv["Naziv"] == product.naziv, "Kolicina"
-                        ] += int(product.kolicina)
-                        stefan_csv.to_csv(stefanova_korpa, index=False)
-                    else:
-                        novi_proizvod = {
-                            "Naziv": product.naziv,
-                            "Cena": product.cena,
-                            "Kolicina": product.kolicina,
-                        }
-                        stefan_csv = stefan_csv._append(
-                            novi_proizvod, ignore_index=True
-                        )
-                        stefan_csv.to_csv(stefanova_korpa, index=False)
-                else:
-                    raise HTTPException(status_code=400, detail="Pogrešan proizvod")
-            return stefan_csv.to_dict(orient="records"), prodavnica_csv.to_dict(
-                orient="records"
-            )
-        return {"mesage": "Nemate dozvolu ya dodavanje proizvoda"}
+                kupac_ulogovani = True
+                break
+        if not kupac_ulogovani:
+            raise HTTPException(status_code=401, detail="Kupac nije ulogovan.")
 
+    korpa = pd.read_csv(rf"data/{kupac.username}_korpa.csv")
+    prodavnica_csv = pd.read_csv(prodavnica)
 
-def delete_product_cart(product: Product):
-    korpa = pd.read_csv(r"data\korpa.csv")
-    prodavnica = pd.read_csv(r"data\prodavnica.csv")
-
-    if product.naziv not in korpa["Naziv"].values:
+    if product.naziv not in prodavnica_csv["Naziv"].values:
         raise HTTPException(status_code=400, detail="Pogrešan proizvod")
-    cart_kolicina = korpa.loc[korpa["Naziv"] == product.naziv, "Kolicina"].values[0]
-    if int(product.kolicina) > cart_kolicina:
-        raise HTTPException(status_code=400, detail="Pogrešan kolicina")
 
-    if int(product.kolicina) == cart_kolicina:
-        korpa = korpa[korpa["Naziv"] != product.naziv]
+    if (
+        int(product.kolicina)
+        > prodavnica_csv.loc[
+            prodavnica_csv["Naziv"] == product.naziv, "Kolicina"
+        ].values[0]
+    ):
+        raise HTTPException(status_code=400, detail="Pogrešna količina")
+
+    if product.naziv in korpa["Naziv"].values:
+        korpa.loc[korpa["Naziv"] == product.naziv, "Kolicina"] += int(product.kolicina)
+        
     else:
-        korpa.loc[korpa["Naziv"] == product.naziv, "Kolicina"] -= int(product.kolicina)
-    korpa.to_csv(r"data\korpa.csv", index=False)
-    prodavnica.loc[prodavnica["Naziv"] == product.naziv, "Kolicina"] += int(
-        product.kolicina
-    )
-    prodavnica.to_csv(r"data\prodavnica.csv", index=False)
-    return korpa.to_dict(orient="records"), prodavnica.to_dict(orient="records")
+        novi_proizvod = {
+            "Naziv": product.naziv,
+            "Cena": product.cena,
+            "Kolicina": product.kolicina,
+        }
+        korpa = korpa._append(novi_proizvod, ignore_index=True)
+    prodavnica_csv.loc[prodavnica_csv["Naziv"]==product.naziv, "Kolicina"] -= int(product.kolicina)
+    prodavnica_csv.to_csv(prodavnica, index =False)
+    korpa.to_csv(rf"data/{kupac.username}_korpa.csv", index=False)
+    return korpa.to_dict(orient="records"), prodavnica_csv.to_dict(orient="records")
